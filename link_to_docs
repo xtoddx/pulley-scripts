@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+host = ENV.fetch('DOC_URL', 'https://docsite.com/branch/{{BRANCH}}/')
+
+pulls = JSON.parse(STDIN.read)
+pulls.each do |req|
+  link = host.gsub('{{BRANCH}}', req['branch'])
+  unless req['body'].include?(link)
+    req['modified'] = true
+    req['body'] = "[Documentation](#{link})\n\n#{req['body']}"
+  end
+end
+
+puts pulls.to_json
+

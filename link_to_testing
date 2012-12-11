@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+host = ENV.fetch('TEST_URL', 'https://test.com/branch/{{BRANCH}}/')
+icon_host = ENV.fetch('TEST_ICON_URL', "#{host}/status_icon")
+
+pulls = JSON.parse(STDIN.read)
+pulls.each do |req|
+  integrity_branch = req['branch'].gsub(/[^a-zA-Z0-9]+/, '-')
+  link = host.gsub('{{BRANCH}}', integrity_branch)
+  icon_link = icon_host.gsub('{{BRANCH}}', integrity_branch)
+  unless req['body'].include?(link)
+    req['modified'] = true
+    req['body'] = "![CI build status](#{icon_link} \"CI Build Icon\")\n" +
+                  "[View Build](#{link})\n\n#{req['body']}"
+  end
+end
+
+puts pulls.to_json
+
