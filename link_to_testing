@@ -9,7 +9,7 @@ pulls = JSON.parse(STDIN.read)
 pulls.each do |req|
   # See lib/integrity/project.rb
   integrity_branch = req['branch'].downcase.gsub(/'s/, 's').gsub(/&/, 'and').
-                                  .gsub(/[^a-z0-9]+/, '-').gsub(/-*$/, '')
+                                   gsub(/[^a-z0-9]+/, '-').gsub(/-*$/, '')
   link = host.gsub('{{BRANCH}}', integrity_branch)
   icon_link = icon_host.gsub('{{BRANCH}}', integrity_branch)
   unless req['body'].include?(link)
